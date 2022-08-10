@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<style>
+    #container {
+        width: 1000px;
+        margin: 20px auto;
+    }
+
+    .ck-editor__editable[role="textbox"] {
+        /* editing area */
+        min-height: 200px;
+    }
+
+    .ck-content .image {
+        /* block images */
+        max-width: 80%;
+        margin: 20px auto;
+    }
+</style>
+<div id="container">
+    <div id="editor">
+    </div>
+</div>
+<!--
+    The "super-build" of CKEditor 5 served via CDN contains a large set of plugins and multiple editor types.
+    See https://ckeditor.com/docs/ckeditor5/latest/installation/getting-started/quick-start.html#running-a-full-featured-editor-from-cdn
+-->
+<script src="https://cdn.ckeditor.com/ckeditor5/35.0.1/super-build/ckeditor.js"></script>
+<!--
+    Uncomment to load the Spanish translation
+    <script src="https://cdn.ckeditor.com/ckeditor5/35.0.1/super-build/translations/es.js"></script>
+-->
+<script>
+    // This sample still does not showcase all CKEditor 5 features (!)
+    // Visit https://ckeditor.com/docs/ckeditor5/latest/features/index.html to browse all the features.
+    CKEDITOR.ClassicEditor
+        .create(document.querySelector('#editor'), {
+            // This feature is not available in any of the builds.
+            // See the "Installation" section.
+            plugins: [Mention],
+
+            mention: {
+                feeds: [
+                    {
+                        marker: '@',
+                        feed: getFeedItems
+                    }]
+            }
+        } )
+        .then()
+        .catch()
+
+    const items = [
+        {
+            id: '@swarley',
+            userId: '1',
+            name: 'Barney Stinson',
+            link: 'https://www.imdb.com/title/tt0460649/characters/nm0000439'
+        },
+        {
+            id: '@lilypad',
+            userId: '2',
+            name: 'Lily Aldrin',
+            link: 'https://www.imdb.com/title/tt0460649/characters/nm0004989'
+        },
+        {
+            id: '@marry',
+            userId: '3',
+            name: 'Marry Ann Lewis',
+            link: 'https://www.imdb.com/title/tt0460649/characters/nm1130627'
+        },
+        {
+            id: '@marshmallow',
+            userId: '4',
+            name: 'Marshall Eriksen',
+            link: 'https://www.imdb.com/title/tt0460649/characters/nm0781981'
+        },
+        {
+            id: '@rsparkles',
+            userId: '5',
+            name: 'Robin Scherbatsky',
+            link: 'https://www.imdb.com/title/tt0460649/characters/nm1130627'
+        },
+        {
+            id: '@tdog',
+            userId: '6',
+            name: 'Ted Mosby',
+            link: 'https://www.imdb.com/title/tt0460649/characters/nm1102140'
+        }
+    ]
+
+    function getFeedItems (queryText) {
+        // As an example of an asynchronous action, return a promise
+        // that resolves after a 100ms timeout.
+        // This can be a server request or any sort of delayed action.
+        return new Promise(resolve => {
+            setTimeout(() => {
+                const itemsToDisplay = items
+                    // Filter out the full list of all items to only those matching the query text.
+                    .filter(isItemMatching)
+                    // Return 10 items max - needed for generic queries when the list may contain hundreds of elements.
+                    .slice(0, 10)
+
+                resolve(itemsToDisplay)
+            }, 100)
+        })
+
+        // Filtering function - it uses the `name` and `username` properties of an item to find a match.
+        function isItemMatching (item) {
+            // Make the search case-insensitive.
+            const searchString = queryText.toLowerCase()
+
+            // Include an item in the search results if the name or username includes the current user input.
+            return (
+                item.name.toLowerCase().includes(searchString) ||
+                item.id.toLowerCase().includes(searchString)
+            )
+        }
+    }
+</script>
+</body>
+</html>
